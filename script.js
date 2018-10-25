@@ -1,17 +1,39 @@
 document.addEventListener("DOMContentLoaded", function(){
 
+  var req = new XMLHttpRequest();
+  var res;
+
+  req.open("GET", "https://opentdb.com/api.php?amount=10&category=11&difficulty=medium&type=multiple");
+  req.responseType = 'json';
+  req.send();
+
+  req.onreadystatechange = function() {
+    if (req.readyState == 4 && req.status == 200) {
+        res = req.response;
+        buildQuiz();
+
+        console.log(res);
+    };
+  };
+
   function buildQuiz() {
     const output = [];                                                     // A place to store the HTML output
 
-    myQuestions.forEach((currentQuestion, questionNumber) => {              // for each question...
-      const answers = [];                                                   // store the list of answer choices
+    res.results.forEach((currentQuestion, questionNumber) => {              // for each question...
+      const answers = [];
 
-      for (letter in currentQuestion.answers) {                             // and for each available answer...
+      answers.push(                                                       // ...add an HTML radio button
+        `<label>
+           <input type="radio" name="question${questionNumber}">
+            ${currentQuestion.correct_answer}
+         </label>`
+      );                                                                    // store the list of answer choices
+
+      for (letter in currentQuestion.incorrect_answers) {                   // and for each available answer...
         answers.push(                                                       // ...add an HTML radio button
           `<label>
-             <input type="radio" name="question${questionNumber}" value="${letter}">
-              ${letter} :
-              ${currentQuestion.answers[letter]}
+             <input type="radio" name="question${questionNumber}">
+              ${currentQuestion.incorrect_answers[letter]}
            </label>`
         );
       }
@@ -24,32 +46,34 @@ document.addEventListener("DOMContentLoaded", function(){
       );
     });
 
-    quizContainer.innerHTML = output.join("");                              // finally combine our output list into one string of HTML and put it on the page
-  }
+    quizContainer.innerHTML = output.join("");
+      console.log(quizContainer);                                               // finally combine our output list into one string of HTML and put it on the page
+  };
+
 
   function showResults() {
     const answerContainers = quizContainer.querySelectorAll(".answers");        // gather answer containers from our quiz
 
     let numCorrect = 0;                                                         // keep track of user's answers
 
-    myQuestions.forEach((currentQuestion, questionNumber) => {                  // for each question...
+    res.results.forEach((currentQuestion, questionNumber) => {                  // for each question...
       const answerContainer = answerContainers[questionNumber];                 // find selected answer
       const selector = `input[name=question${questionNumber}]:checked`;
-      const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+      const userAnswer = (answerContainer.querySelector(selector));
 
-      if (userAnswer === currentQuestion.correctAnswer) {                       // if answer is correct
+      if (userAnswer === currentQuestion.correct_answer) {                       // if answer is correct
         numCorrect++;                                                           // add to the number of correct answers
-
         answerContainers[questionNumber].style.color = "lightgreen";            // color the answers green
       } else {                                                                  // if answer is wrong or blank color the answers red
         answerContainers[questionNumber].style.color = "red";
       }
     });
 
-    resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;  // show number of correct answers out of total
+    resultsContainer.innerHTML = `${numCorrect} out of ${res.results.length}`;  // show number of correct answers out of total
   }
 
   function showSlide(n) {
+    console.log(slides[0]);
     slides[currentSlide].classList.remove("active-slide");
     slides[n].classList.add("active-slide");
     currentSlide = n;
@@ -67,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function(){
       nextButton.style.display = "inline-block";
       submitButton.style.display = "none";
     }
-  }
+  };
 
   function showNextSlide() {
     showSlide(currentSlide + 1);
@@ -81,13 +105,13 @@ document.addEventListener("DOMContentLoaded", function(){
   const resultsContainer = document.getElementById("results");
   const submitButton = document.getElementById("submit");
 
-  // display quiz right away
-  buildQuiz();
+
+  //buildQuiz();
 
   const previousButton = document.getElementById("previous");
   const nextButton = document.getElementById("next");
   const slides = document.querySelectorAll(".slide");
-  let currentSlide = 0;
+  var currentSlide = 0;
 
   showSlide(0);
 
@@ -95,4 +119,6 @@ document.addEventListener("DOMContentLoaded", function(){
   submitButton.addEventListener("click", showResults);
   previousButton.addEventListener("click", showPreviousSlide);
   nextButton.addEventListener("click", showNextSlide);
+
+
 });
