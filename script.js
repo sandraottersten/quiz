@@ -1,35 +1,25 @@
+
 document.addEventListener("DOMContentLoaded", function(){
 
-var res = {content:0,results:[
-  {question: "Who?", correct_answer: "Peter", incorrect_answers: ["Tommy","Teddy","Toto"] },
-  {question: "When?", correct_answer: "Hello", incorrect_answers: ["Bye","Hi","Hoho"]},
-  {question: "How?", correct_answer: "Like this", incorrect_answers: ["Like that","Not","Cheese"]}
-]
-};
+var res;
 
+fetch('https://opentdb.com/api.php?amount=03&category=11&difficulty=medium&type=multiple')
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(x) {
+    console.log(x);
+    res = x;
+  })
+  .then(function() {
+    buildQuiz();
+  })
+  .then(function() {
+    showSlide(0);
+});
 
-
-/*
-  var req = new XMLHttpRequest();
-  var res;
-
-
-
-  req.onreadystatechange = function() {
-    if (req.readyState == 4 && req.status == 200) {
-        res = req.response;
-        buildQuiz();
-        alert("third one");
-
-        console.log(res);
-    };
-  };
-
-
-*/
 
   function buildQuiz() {
-    alert("second one");
     const output = [];                                                     // A place to store the HTML output
 
     res.results.forEach((currentQuestion, questionNumber) => {              // for each question...
@@ -63,7 +53,6 @@ var res = {content:0,results:[
       console.log(quizContainer);                                               // finally combine output list into one string of HTML and put it on the page
   };
 
-
   function showResults() {
     const answerContainers = quizContainer.querySelectorAll(".answers");        // gather answer containers from quiz
 
@@ -73,6 +62,7 @@ var res = {content:0,results:[
       const answerContainer = answerContainers[questionNumber];                 // find selected answer
       const selector = `input[name=question${questionNumber}]:checked`;
       const userAnswer = (answerContainer.querySelector(selector));
+      console.log(userAnswer);
 
       if (userAnswer === currentQuestion.correct_answer) {                       // if answer is correct
         numCorrect++;                                                           // add to the number of correct answers
@@ -86,7 +76,11 @@ var res = {content:0,results:[
   }
 
   function showSlide(n) {
-    alert("first one");
+
+    const slides = document.querySelectorAll(".slide");
+    const previousButton = document.getElementById("previous");
+    const nextButton = document.getElementById("next");
+
     slides[currentSlide].classList.remove("active-slide");
     slides[n].classList.add("active-slide");
     currentSlide = n;
@@ -113,25 +107,16 @@ var res = {content:0,results:[
   function showPreviousSlide() {
     showSlide(currentSlide - 1);
   }
-
+  var currentSlide = 0;
   const quizContainer = document.getElementById("quiz");
   const resultsContainer = document.getElementById("results");
   const submitButton = document.getElementById("submit");
-
-
-  buildQuiz();
-
   const previousButton = document.getElementById("previous");
   const nextButton = document.getElementById("next");
-  const slides = document.querySelectorAll(".slide");
-  var currentSlide = 0;
-
-  showSlide(0);
 
   // on submit, show results
   submitButton.addEventListener("click", showResults);
   previousButton.addEventListener("click", showPreviousSlide);
   nextButton.addEventListener("click", showNextSlide);
-
 
 });
