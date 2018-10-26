@@ -1,33 +1,46 @@
 document.addEventListener("DOMContentLoaded", function(){
 
+var res = {content:0,results:[
+  {question: "Who?", correct_answer: "Peter", incorrect_answers: ["Tommy","Teddy","Toto"] },
+  {question: "When?", correct_answer: "Hello", incorrect_answers: ["Bye","Hi","Hoho"]},
+  {question: "How?", correct_answer: "Like this", incorrect_answers: ["Like that","Not","Cheese"]}
+]
+};
+
+
+
+/*
   var req = new XMLHttpRequest();
   var res;
 
-  req.open("GET", "https://opentdb.com/api.php?amount=10&category=11&difficulty=medium&type=multiple");
-  req.responseType = 'json';
-  req.send();
+
 
   req.onreadystatechange = function() {
     if (req.readyState == 4 && req.status == 200) {
         res = req.response;
         buildQuiz();
+        alert("third one");
 
         console.log(res);
     };
   };
 
+
+*/
+
   function buildQuiz() {
+    alert("second one");
     const output = [];                                                     // A place to store the HTML output
 
     res.results.forEach((currentQuestion, questionNumber) => {              // for each question...
       const answers = [];
 
-      answers.push(                                                       // ...add an HTML radio button
+      answers.push(                                                     // store the list of answer choices
         `<label>
            <input type="radio" name="question${questionNumber}">
             ${currentQuestion.correct_answer}
          </label>`
-      );                                                                    // store the list of answer choices
+      );
 
       for (letter in currentQuestion.incorrect_answers) {                   // and for each available answer...
         answers.push(                                                       // ...add an HTML radio button
@@ -47,12 +60,12 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
     quizContainer.innerHTML = output.join("");
-      console.log(quizContainer);                                               // finally combine our output list into one string of HTML and put it on the page
+      console.log(quizContainer);                                               // finally combine output list into one string of HTML and put it on the page
   };
 
 
   function showResults() {
-    const answerContainers = quizContainer.querySelectorAll(".answers");        // gather answer containers from our quiz
+    const answerContainers = quizContainer.querySelectorAll(".answers");        // gather answer containers from quiz
 
     let numCorrect = 0;                                                         // keep track of user's answers
 
@@ -73,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 
   function showSlide(n) {
-    console.log(slides[0]);
+    alert("first one");
     slides[currentSlide].classList.remove("active-slide");
     slides[n].classList.add("active-slide");
     currentSlide = n;
@@ -106,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function(){
   const submitButton = document.getElementById("submit");
 
 
-  //buildQuiz();
+  buildQuiz();
 
   const previousButton = document.getElementById("previous");
   const nextButton = document.getElementById("next");
