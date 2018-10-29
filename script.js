@@ -23,20 +23,19 @@ fetch('https://opentdb.com/api.php?amount=03&category=11&difficulty=medium&type=
     const output = [];                                                     // A place to store the HTML output
 
     res.results.forEach((currentQuestion, questionNumber) => {              // for each question...
+      const mergeAnswers = [];
       const answers = [];
 
-      answers.push(                                                     // store the list of answer choices
-        `<label>
-           <input type="radio" name="question${questionNumber}">
-            ${currentQuestion.correct_answer}
-         </label>`
-      );
+      mergeAnswers.push(currentQuestion.correct_answer);
+      for (var j=0; j<currentQuestion.incorrect_answers.length; j++) {
+        mergeAnswers.push(currentQuestion.incorrect_answers[j]);
+      }
 
-      for (letter in currentQuestion.incorrect_answers) {                   // and for each available answer...
+      for (letter in mergeAnswers) {                   // and for each available answer...
         answers.push(                                                       // ...add an HTML radio button
           `<label>
-             <input type="radio" name="question${questionNumber}">
-              ${currentQuestion.incorrect_answers[letter]}
+             <input type="radio" name="question${questionNumber}" value="${mergeAnswers[letter]}">
+              ${mergeAnswers[letter]}
            </label>`
         );
       }
@@ -54,6 +53,12 @@ fetch('https://opentdb.com/api.php?amount=03&category=11&difficulty=medium&type=
   };
 
   function showResults() {
+    const slides = document.querySelectorAll(".slide");
+    slides[currentSlide].classList.remove("active-slide");
+    slides[0].classList.add("last-slide");
+    currentSlide = 0;
+    submitButton.style.display = "none";
+
     const answerContainers = quizContainer.querySelectorAll(".answers");        // gather answer containers from quiz
 
     let numCorrect = 0;                                                         // keep track of user's answers
@@ -61,7 +66,7 @@ fetch('https://opentdb.com/api.php?amount=03&category=11&difficulty=medium&type=
     res.results.forEach((currentQuestion, questionNumber) => {                  // for each question...
       const answerContainer = answerContainers[questionNumber];                 // find selected answer
       const selector = `input[name=question${questionNumber}]:checked`;
-      const userAnswer = (answerContainer.querySelector(selector));
+      const userAnswer = (answerContainer.querySelector(selector).value);
       console.log(userAnswer);
 
       if (userAnswer === currentQuestion.correct_answer) {                       // if answer is correct
@@ -78,18 +83,11 @@ fetch('https://opentdb.com/api.php?amount=03&category=11&difficulty=medium&type=
   function showSlide(n) {
 
     const slides = document.querySelectorAll(".slide");
-    const previousButton = document.getElementById("previous");
     const nextButton = document.getElementById("next");
 
     slides[currentSlide].classList.remove("active-slide");
     slides[n].classList.add("active-slide");
     currentSlide = n;
-
-    if (currentSlide === 0) {
-      previousButton.style.display = "none";
-    } else {
-      previousButton.style.display = "inline-block";
-    }
 
     if (currentSlide === slides.length - 1) {
       nextButton.style.display = "none";
@@ -104,19 +102,15 @@ fetch('https://opentdb.com/api.php?amount=03&category=11&difficulty=medium&type=
     showSlide(currentSlide + 1);
   }
 
-  function showPreviousSlide() {
-    showSlide(currentSlide - 1);
-  }
+
   var currentSlide = 0;
   const quizContainer = document.getElementById("quiz");
   const resultsContainer = document.getElementById("results");
   const submitButton = document.getElementById("submit");
-  const previousButton = document.getElementById("previous");
   const nextButton = document.getElementById("next");
 
   // on submit, show results
   submitButton.addEventListener("click", showResults);
-  previousButton.addEventListener("click", showPreviousSlide);
   nextButton.addEventListener("click", showNextSlide);
 
 });

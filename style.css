@@ -1,9 +1,9 @@
 @import url(https://fonts.googleapis.com/css?family=Work+Sans:300,600);
 
 body{
-    font-size: 20px;
-    font-family: 'Work Sans', sans-serif;
-    color: #333;
+  font-size: 20px;
+  font-family: 'Work Sans', sans-serif;
+  color: #333;
   font-weight: 300;
   text-align: center;
   background-color: lightblue;
@@ -44,10 +44,20 @@ button{
 button:hover{
     background-color: #38a;
 }
+.last-slide{
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  z-index: 2;
+  opacity: 1;
+  transition: opacity 0.5s;
+}
 
-
-
-
+#results{
+  padding-top: 100px;
+  font-size: 50px;
+}
 
 .slide{
   position: absolute;
@@ -64,8 +74,8 @@ button:hover{
 }
 .quiz-container{
   position: relative;
-  height: 250px;
-  width: 400px;
+  height: 300px;
+  width: 600px;
   margin-top: 40px;
   background-color: white;
   margin:auto;
